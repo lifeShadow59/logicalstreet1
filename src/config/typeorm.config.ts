@@ -15,7 +15,7 @@ export class TypeOrmConfig {
       username: this.configService.get<string>('DB_USERNAME'),
       password: this.configService.get<string>('DB_PASSWORD'),
       database: this.configService.get<string>('DB_NAME'),
-      entities: [__dirname + '/../entities/*.entity{.ts,.js}'],
+      entities: [__dirname + '/../**/entities/*.entity{.ts,.js}'],
       migrations: [__dirname + '/../migrations/*{.ts,.js}'],
       cache: true,
       logger: 'debug',
