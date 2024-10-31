@@ -22,7 +22,7 @@ export class Message {
   })
   status: MessageStatus;
 
-  @Column('jsonb')
+  @Column('jsonb', { nullable: true })
   translations: Record<string, string>;
 
   @CreateDateColumn()

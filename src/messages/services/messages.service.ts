@@ -1,8 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
 import { Message } from '../entities/message.entity';
 import { SearchMessageDto } from '../dto/message.dto';
+import { CreateMessageDto } from '../dto/create-message.dto';
 
 @Injectable()
 export class MessagesService {
@@ -10,6 +15,21 @@ export class MessagesService {
     @InjectRepository(Message)
     private messageRepository: Repository<Message>,
   ) {}
+
+  async create(createMessageDto: CreateMessageDto): Promise<Message> {
+    try {
+      const message = this.messageRepository.create({
+        ...createMessageDto,
+        translations: createMessageDto.translations,
+      });
+
+      return await this.messageRepository.save(message);
+    } catch (error) {
+      throw new BadRequestException(
+        `Failed to create message: ${error.message}`,
+      );
+    }
+  }
 
   async findOne(id: number): Promise<Omit<Message, 'translations'>> {
     const message = await this.messageRepository.findOne({ where: { id } });

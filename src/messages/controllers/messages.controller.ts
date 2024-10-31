@@ -1,28 +1,79 @@
 import {
+  Body,
   Controller,
   Get,
+  HttpStatus,
   Param,
   ParseIntPipe,
+  Post,
   Query,
   ValidationPipe,
 } from '@nestjs/common';
 import { MessagesService } from '../services/messages.service';
 import { SearchMessageDto } from '../dto/message.dto';
 import {
-  ApiExtraModels,
+  ApiBody,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiQuery,
+  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { Message } from 'src/entities/message.entity';
+import { CreateMessageDto } from '../dto/create-message.dto';
 
 @ApiTags('Messages')
 @Controller('messages')
 export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
+
+  @Post()
+  @ApiOperation({
+    summary: 'Create a new message',
+    description: 'Creates a new message with required translations',
+  })
+  @ApiBody({
+    type: CreateMessageDto,
+    description: 'Message data',
+    required: true,
+    examples: {
+      complete: {
+        summary: 'Complete message with translations',
+        value: {
+          message: "Hello, I'm a message",
+          translations: {
+            fr: 'Bonjour, je suis un message',
+            es: 'Hola, soy un mensaje',
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'The message has been successfully created.',
+    type: Message,
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Invalid input data or missing translations.',
+  })
+  async create(
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        whitelist: true,
+        forbidNonWhitelisted: true,
+      }),
+    )
+    createMessageDto: CreateMessageDto,
+  ) {
+    return await this.messagesService.create(createMessageDto);
+  }
+
+  // ------------------------------------------------------------
 
   @Get('search')
   @ApiOperation({
