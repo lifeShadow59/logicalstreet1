@@ -8,25 +8,14 @@ import { ConfigurationModule } from './config/config.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: (() => {
-        switch (process.env.NODE_ENV) {
-          case 'development':
-            return '.env.dev';
-          case 'local':
-            return '.env.local';
-          default:
-            return '.env';
-        }
-      })(),
-    }),
+    ConfigModule.forRoot(),
     ConfigurationModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigurationModule],
       inject: [TypeOrmConfig],
-      useFactory: (typeOrmConfig: TypeOrmConfig) =>
-        typeOrmConfig.getOrmConfig(),
+      useFactory: (typeOrmConfig: TypeOrmConfig) => {
+        return typeOrmConfig.getOrmConfig();
+      },
     }),
   ],
   controllers: [AppController],
