@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfig } from './config/typeorm.config';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ConfigurationModule } from './config/config.module';
+import { MessagesModule } from './messages/messages.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ConfigurationModule } from './config/config.module';
         return typeOrmConfig.getOrmConfig();
       },
     }),
+    MessagesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

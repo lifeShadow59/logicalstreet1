@@ -33,25 +33,56 @@ export class MessagesService {
     return message.translations[language];
   }
 
-  async search(searchDto: SearchMessageDto): Promise<Message[]> {
+  async search(searchDto: SearchMessageDto): Promise<{
+    items: Message[];
+    meta: {
+      total: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+    };
+  }> {
     const {
       query,
       status,
       sortBy = 'createdAt',
       sortOrder = 'DESC',
+      page = 1,
+      limit = 10,
     } = searchDto;
 
-    const whereClause: any = {};
+    const queryBuilder = this.messageRepository.createQueryBuilder('message');
+
+    // Add search conditions
     if (query) {
-      whereClause.message = Like(`%${query}%`);
-    }
-    if (status) {
-      whereClause.status = status;
+      queryBuilder.andWhere('message.message ILIKE :query', {
+        query: `%${query}%`,
+      });
     }
 
-    return this.messageRepository.find({
-      where: whereClause,
-      order: { [sortBy]: sortOrder },
-    });
+    if (status) {
+      queryBuilder.andWhere('message.status = :status', { status });
+    }
+
+    // Add sorting
+    queryBuilder.orderBy(`message.${sortBy}`, sortOrder);
+
+    // Add pagination
+    const skip = (page - 1) * limit;
+    queryBuilder.skip(skip).take(limit);
+
+    // Get results and total count
+    const [items, total] = await queryBuilder.getManyAndCount();
+
+    // Return paginated result
+    return {
+      items,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 }
