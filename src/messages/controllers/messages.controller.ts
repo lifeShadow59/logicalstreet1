@@ -21,8 +21,9 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Message } from 'src/entities/message.entity';
+
 import { CreateMessageDto } from '../dto/create-message.dto';
+import { Message } from '../entities/message.entity';
 
 @ApiTags('Messages')
 @Controller('messages')

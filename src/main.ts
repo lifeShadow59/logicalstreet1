@@ -20,8 +20,6 @@ async function bootstrap() {
     .setTitle('Messages API')
     .setDescription('The Messages API description')
     .setVersion('1.0')
-    .addTag('messages')
-    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
