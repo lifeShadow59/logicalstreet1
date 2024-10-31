@@ -17,7 +17,12 @@ export class TypeOrmConfig {
       database: this.configService.get<string>('DB_NAME'),
       entities: [__dirname + '/../**/entities/*.entity{.ts,.js}'],
       migrations: [__dirname + '/../migrations/*{.ts,.js}'],
-      cache: true,
+      cache: {
+        alwaysEnabled: true,
+        type: 'database',
+        ignoreErrors: false,
+        duration: 100000,
+      },
       logger: 'debug',
       logging: 'all',
       logNotifications: true,
