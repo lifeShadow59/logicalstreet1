@@ -39,8 +39,8 @@ jobs:
         run: npm ci
       - name: Copy ENV
         run: |
-          touch .envqwe
-          echo "${{ secrets.PROD_ENV_FILE }}"
+          touch .env
+          echo "${{ secrets.PROD_ENV_FILE }}" > .env
       - name: Build with Next.js
         run: npm run build
       - name: Pm2 restart
